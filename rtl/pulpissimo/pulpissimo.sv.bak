@@ -10,7 +10,7 @@
 
 module pulpissimo
 #(
-  parameter CORE_TYPE   = 4, // 0 for RISCY, 1 for IBEX RV32IMC (formerly ZERORISCY), 2 for IBEX RV32EC (formerly MICRORISCY), 3 for IBEX RV32EMC, 4 for scr1
+  parameter CORE_TYPE   = 4, // 0 for RISCY, 1 for IBEX RV32IMC (formerly ZERORISCY), 2 for IBEX RV32EC (formerly MICRORISCY), 3 for scr1
   parameter USE_FPU     = 1,
   parameter USE_HWPE    = 1
 )
@@ -529,11 +529,11 @@ module pulpissimo
   //***********************************************************
   //********** SAFE DOMAIN ************************************
   //***********************************************************
-   safe_domain safe_domain_i (
+   /*safe_domain safe_domain_i (
 
         .ref_clk_i                  ( s_ref_clk                   ),
         .slow_clk_o                 ( s_slow_clk                  ),
-        .rst_ni                     ( s_rstn                      ),
+        .rst_ni                     ( s_rstn                     ),
 
         .rst_no                     ( s_rstn_por                  ),
 
@@ -548,12 +548,12 @@ module pulpissimo
         .pad_mux_i                  ( s_pad_mux_soc               ),
 
         .gpio_out_i                 ( s_gpio_out                  ),
-        .gpio_in_o                  ( ), //s_gpio_in                   ),
+        .gpio_in_o                  ( s_gpio_in                   ),
         .gpio_dir_i                 ( s_gpio_dir                  ),
         .gpio_cfg_i                 ( s_gpio_cfg                  ),
 
         .uart_tx_i                  ( s_uart_tx                   ),
-        .uart_rx_o                  ( ), //s_uart_rx                   ),
+        .uart_rx_o                  ( s_uart_rx                   ),
 
         .i2c0_scl_out_i             ( s_i2c0_scl_out              ),
         .i2c0_scl_in_o              ( s_i2c0_scl_in               ),
@@ -729,14 +729,14 @@ module pulpissimo
         .oe_i2s1_sdi_o              ( s_oe_i2s1_sdi               ),
 
         .*
-   );
+   );*/
    // Hard replacements from safe_domain
-   //assign s_rstn_por      = s_rstn;
+   assign s_rstn_por      = s_rstn;
 
-   //assign s_test_clk      = 1'b0;
-   //assign s_dft_cg_enable = 1'b0;
-   //assign s_test_mode     = 1'b0;
-   //assign s_mode_select   = 1'b0;
+   assign s_test_clk      = 1'b0;
+   assign s_dft_cg_enable = 1'b0;
+   assign s_test_mode     = 1'b0;
+   assign s_mode_select   = 1'b0;
 
    // SOC DOMAIN
    soc_domain #(
