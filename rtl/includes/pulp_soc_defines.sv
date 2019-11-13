@@ -52,7 +52,7 @@
 
 
 // uncomment if FPGA emulator
-// `define PULP_FPGA_EMUL 1
+`define PULP_FPGA_EMUL 1
 // uncomment if using Vivado for ulpcluster synthesis
 `define VIVADO
 

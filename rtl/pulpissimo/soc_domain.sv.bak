@@ -110,11 +110,9 @@ module soc_domain #(
     output logic                             sdio_cmd_oen_o,
     output logic                       [3:0] sdio_data_o,
     input  logic                       [3:0] sdio_data_i,
-    output logic                       [3:0] sdio_data_oen_o,
+    output logic                       [3:0] sdio_data_oen_o
 
-    output logic                             can_tx_o,
-    input  logic                             can_rx_i,
-
+    ,
     // CLUSTER
     output logic                             cluster_clk_o,
     output logic                             cluster_rstn_o,

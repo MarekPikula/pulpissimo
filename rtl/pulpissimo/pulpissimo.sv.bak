@@ -10,7 +10,7 @@
 
 module pulpissimo
 #(
-  parameter CORE_TYPE   = 0, // 0 for RISCY, 1 for IBEX RV32IMC (formerly ZERORISCY), 2 for IBEX RV32EC (formerly MICRORISCY)
+  parameter CORE_TYPE   = 0, // 0 for RISCY, 1 for ZERORISCY, 2 for MICRORISCY
   parameter USE_FPU     = 1,
   parameter USE_HWPE    = 1
 )
@@ -57,20 +57,18 @@ module pulpissimo
    inout  wire        pad_reset_n,
    inout  wire        pad_bootsel,
 
-   input  wire        pad_jtag_tck,
-   input  wire        pad_jtag_tdi,
-   output wire        pad_jtag_tdo,
-   input  wire        pad_jtag_tms,
-   input  wire        pad_jtag_trst,
+   inout  wire        pad_jtag_tck,
+   inout  wire        pad_jtag_tdi,
+   inout  wire        pad_jtag_tdo,
+   inout  wire        pad_jtag_tms,
+   inout  wire        pad_jtag_trst,
 
-   input  wire        pad_xtal_in,
-
+   inout  wire        pad_xtal_in,
+   
    output wire [31:0] gpio_o,
    input  wire [31:0] gpio_i,
    output wire        uart_tx,
-   input  wire        uart_rx,
-   output wire        can_tx,
-   input  wire        can_rx
+   input  wire        uart_rx
   );
 
   localparam AXI_ADDR_WIDTH             = 32;
@@ -234,8 +232,9 @@ module pulpissimo
   logic [31:0]                 s_gpio_in;
   logic [31:0]                 s_gpio_dir;
   logic [191:0]                s_gpio_cfg;
+  
   assign gpio_o = s_gpio_out;
-  assign s_gpio_in = gpio_i;
+  assign gpio_i = s_gpio_in;
 
   logic                        s_rf_tx_clk;
   logic                        s_rf_tx_oeb;
@@ -307,11 +306,6 @@ module pulpissimo
   logic [3:0]                  s_sdio_datao;
   logic [3:0]                  s_sdio_data_oen;
 
-  logic                        s_can_tx;
-  logic                        s_can_rx;
-  assign can_tx = s_can_tx;
-  assign s_can_rx = can_rx;
-
 
   logic                        s_cam_pclk;
   logic [7:0]                  s_cam_data;
@@ -367,9 +361,8 @@ module pulpissimo
   //***********************************************************
   //********** PAD FRAME **************************************
   //***********************************************************
-
-  /*
-  pad_frame pad_frame_i
+  
+  /*pad_frame pad_frame_i
   (
         .pad_cfg_i             ( s_pad_cfg              ),
         .ref_clk_o             ( s_ref_clk              ),
@@ -523,9 +516,7 @@ module pulpissimo
         .pad_jtag_trst         ( pad_jtag_trst          ),
         .pad_xtal_in           ( pad_xtal_in            )
 
-   );
-   */
-
+   );*/
    // Hard replacements from pad frame
    assign s_ref_clk = pad_xtal_in;
    assign s_rstn = pad_reset_n;
@@ -538,7 +529,7 @@ module pulpissimo
   //***********************************************************
   //********** SAFE DOMAIN ************************************
   //***********************************************************
-   safe_domain safe_domain_i (
+   /*safe_domain safe_domain_i (
 
         .ref_clk_i                  ( s_ref_clk                   ),
         .slow_clk_o                 ( s_slow_clk                  ),
@@ -557,12 +548,12 @@ module pulpissimo
         .pad_mux_i                  ( s_pad_mux_soc               ),
 
         .gpio_out_i                 ( s_gpio_out                  ),
-        .gpio_in_o                  ( ), //s_gpio_in                   ),
+        .gpio_in_o                  ( ),//s_gpio_in                   ),
         .gpio_dir_i                 ( s_gpio_dir                  ),
         .gpio_cfg_i                 ( s_gpio_cfg                  ),
 
         .uart_tx_i                  ( s_uart_tx                   ),
-        .uart_rx_o                  ( ), //s_uart_rx                   ),
+        .uart_rx_o                  ( ),//s_uart_rx                   ),
 
         .i2c0_scl_out_i             ( s_i2c0_scl_out              ),
         .i2c0_scl_in_o              ( s_i2c0_scl_in               ),
@@ -738,7 +729,14 @@ module pulpissimo
         .oe_i2s1_sdi_o              ( s_oe_i2s1_sdi               ),
 
         .*
-   );
+   );*/
+   // Hard replacements
+   assign s_rstn_por      = s_rstn;
+
+   assign s_test_clk      = 1'b0;
+   assign s_dft_cg_enable = 1'b0;
+   assign s_test_mode     = 1'b0;
+   assign s_mode_select   = 1'b0;
 
    // SOC DOMAIN
    soc_domain #(
@@ -842,9 +840,6 @@ module pulpissimo
         .sdio_data_o                  ( s_sdio_datao                     ),
         .sdio_data_i                  ( s_sdio_datai                     ),
         .sdio_data_oen_o              ( s_sdio_data_oen                  ),
-
-        .can_tx_o                     ( s_can_tx                         ),
-        .can_rx_i                     ( s_can_rx                         ),
 
         .cluster_busy_i               ( s_cluster_busy                   ),
 
